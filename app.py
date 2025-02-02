@@ -4,6 +4,7 @@ import time
 import argparse
 import yaml
 import os
+import uuid
 
 app = Flask(__name__)
 
@@ -100,6 +101,31 @@ def list_models():
             ],
             "object": "list",
         }
+    )
+
+
+@app.route("/v1/set_chat_id", methods=["POST"])
+def set_chat_id():
+    global chat_id
+    new_chat_id = request.json.get("chat_id")
+    if new_chat_id:
+        chat_id = new_chat_id
+        return (
+            jsonify({"message": "Chat ID updated successfully", "chat_id": chat_id}),
+            200,
+        )
+    else:
+        return jsonify({"error": "No new chat_id provided"}), 400
+
+
+@app.route("/v1/set_random_chat_id", methods=["POST"])
+def set_random_chat_id():
+    global chat_id
+    new_chat_id = str(uuid.uuid4())
+    chat_id = new_chat_id
+    return (
+        jsonify({"message": "Chat ID updated successfully", "chat_id": chat_id}),
+        200,
     )
 
 
