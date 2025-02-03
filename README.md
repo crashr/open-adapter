@@ -49,7 +49,10 @@ python app.py --config config.yaml
 ```
 Alternatively, you can specify all options via command-line arguments:
 ```
-python app.py --config config.yaml --host 0.0.0.0 --port 5000 --backend_url http://localhost:3000/api --chat_id my-chat-id --auto_id
+python app.py \
+--host 0.0.0.0 \
+--port 5000 \
+--backend_url http://your.flowise:3000/api/v1/prediction/abcdefgh-1234-abcd-wxyz-aa1234567890
 ```
 
 
