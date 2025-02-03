@@ -35,7 +35,7 @@ pip install -r requirements.txt
 
 Create a configuration file (e.g., config.yaml) with the necessary settings:
 ```
-backend_url: http://localhost:3000/api 
+backend_url: http://your.flowise:3000/api/v1/prediction/abcdefgh-1234-abcd-wxyz-aa1234567890
 host: 0.0.0.0
 port: 5000
 ```
