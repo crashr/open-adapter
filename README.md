@@ -72,3 +72,6 @@ Send a POST request to /v1/set_chat_id with the following JSON payload:
   "chat_id": "my-custom-chat-id"
 }
 ```
+## Caveats
+
+1. It is possiblbe to use this for example with Open-WebUI. When you create a new chat, a new chat ID will be generated and used. But if you switch back to a previous chat, the new chat ID is still valid. This is due to the architecture of how Flowise works. A solution for this doesn't exist by now.
