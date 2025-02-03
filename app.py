@@ -10,7 +10,8 @@ app = Flask(__name__)
 
 
 backend_url = ""
-chat_id = ""  # "00000000-0000-0000-0000-000000000000"
+chat_id = ""
+auto_id = True
 
 
 def load_config(config_path):
@@ -27,26 +28,37 @@ def home():
 
 @app.route("/v1/chat/completions", methods=["POST"])
 def chat_completions():
+    global chat_id
+
     print(request.json)
 
+    messages = request.json.get("messages", [{}])
+
+    if auto_id is True:
+        user_messages = [msg for msg in messages if msg.get("role") == "user"]
+        system_messages = [msg for msg in messages if msg.get("role") == "system"]
+        if len(user_messages) == 1 and len(system_messages) >= 1:
+            base_uuid = "00000000-0000-0000-0000-000000000000"
+            base_uuid_str = str(base_uuid)[:-10]
+            current_timestamp = int(time.time())
+            timestamp_str = f"{current_timestamp:010d}"
+            chat_id = base_uuid_str + timestamp_str
+            print("Generated ID:", chat_id)
+
+    user_message = messages[-1].get("content", "")
     user_message = request.json.get("messages", [{}])[-1].get("content", "")
 
-    # new_data = {"question": user_message}
     new_data = {
         "question": user_message,
         "chatId": chat_id,
     }
 
-    print("new_data")
     print(new_data)
-
     response = requests.post(backend_url, json=new_data)
-
     print(response)
     print(response.text)
-    response_json = response.json()
 
-    print("response_json")
+    response_json = response.json()
     print(response_json)
 
     formatted_response = {
@@ -154,6 +166,11 @@ def main():
     parser.add_argument("--port", type=str, help="Port.")
     parser.add_argument("--backend_url", type=str, help="Backend URL.")
     parser.add_argument("--chat_id", type=str, help="Chat ID.")
+    parser.add_argument(
+        "--auto_id",
+        action="store_true",
+        help="Automatically generate a new chat ID if the message is the first message.",
+    )
 
     args = parser.parse_args()
 
@@ -163,6 +180,7 @@ def main():
     chat_id = args.chat_id if args.chat_id else config.get("chat_id")
     host = args.host if args.host else config.get("host")
     port = args.port if args.port else config.get("port")
+    auto_id = args.auto_id if args.auto_id else config.get("auto_id")
 
     app.run(debug=True, host=host, port=port)
 
